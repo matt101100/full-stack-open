@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
 import Persons from './components/Persons'
 
 const App = () => {
@@ -51,6 +52,15 @@ const App = () => {
   const doesPersonExist = (name, persons) => {
     return persons.some(person => person.name === name)
   }
+
+  // get data from the json-server
+  useEffect(() => {
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        setPersons(response.data)
+      })
+  }, [])
 
   return (
     <div>

@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import Persons from './components/Persons'
+import PersonForm from './components/PersonForm'
+import Filter from './components/Filter'
+import serverUtils from './services/serverUtils'
 
 const App = () => {
   // store the name given as input to the form
@@ -8,34 +10,74 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterString, setFilterString] = useState('')
-  const [showAll, setShowAll] = useState(false)
 
-  const personsToShow = showAll
-  ? persons
-  : persons.filter(person => person.name.toLowerCase().includes(filterString.toLowerCase()))
+  // filter persons by user specified string
+  const personsToShow = persons.filter(person => person.name.toLowerCase().includes(filterString.toLowerCase()))
 
-  const handleAddName = (event) => {
-    event.preventDefault() // prevents the page from reloading on button press
-    if (doesPersonExist(newName, persons)) {
-      // prevent duplicate names from being added to the phonebook
-      alert('${newName} is already added to phonebook')
-      return
-    }
-
-    // create and add new person object if it is not already in book
-    const personObject = {
-      name: newName,
-      number: newNumber,
-      important: Math.random() < 0.5,
-      id: String(persons.length + 1)
-    }
-    // updates the persons array with the new contact
-    setPersons(persons.concat(personObject))
-    setNewName('') // reset input field to default empty value
-    setNewNumber('')
+  const doesPersonExist = (name, persons) => {
+    return persons.some(person => person.name === name) // case insensitive
   }
 
-  // updates the newName state value to the last string in the input field
+  // !! Event Handlers !!
+
+  const handleAddName = (event, id) => {
+      event.preventDefault() // prevents the page from reloading on button press
+      if (doesPersonExist(newName, persons)) {
+        // prevent duplicate names from being added to the phonebook
+        const confirmed = window.confirm(
+          `${newName} is already added to phonebook, replace the old number with a new one?`)
+        
+        if (confirmed) {
+          // update number of existing name
+          const existingPerson = persons.find(person => person.name === newName)
+          const updatedPerson = {
+            name: newName,
+            number: newNumber,
+            important: Math.random() < 0.5,
+            id: existingPerson.id
+          }
+          serverUtils
+            .update(updatedPerson.id, updatedPerson)
+            .then((returnedPerson) => {
+              setPersons(prevPersons =>
+                prevPersons.map(person => 
+                  person.id === returnedPerson.id ? returnedPerson : person
+                )
+              )
+            })
+        }
+        return
+      }
+
+      // create and add new person object if it is not already in book
+      const personObject = {
+        name: newName,
+        number: newNumber,
+        important: Math.random() < 0.5,
+      }
+      // POST the new person to the server and update persons array
+      serverUtils
+        .create(personObject)
+        .then(returnedPerson => {
+          setPersons(persons.concat(returnedPerson))
+          setNewName('')
+          setNewNumber('')
+        })
+  }
+
+  const handleDelete = (event, id) => {
+    const confirmed = window.confirm("Are you sure you want to delete this person?")
+    if (confirmed) {
+      // delete the person object with specified id
+      serverUtils
+        .destroy(id)
+        .then(() => {
+          setPersons(prevPersons => prevPersons.filter(person => person.id !== id))
+        })
+    }
+  }
+
+  // following functions update state values to the last string in the input field
   const handleNameChange = (event) => {
     setNewName(event.target.value)
   }
@@ -49,41 +91,25 @@ const App = () => {
     setFilterString(event.target.value)
   }
 
-  const doesPersonExist = (name, persons) => {
-    return persons.some(person => person.name === name)
-  }
-
   // get data from the json-server
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data)
+    serverUtils
+      .getAll()
+      .then(initialPersons => {
+        setPersons(initialPersons)
       })
   }, [])
 
   return (
     <div>
       <h1>Phonebook</h1>
-      <form onSubmit={handleAddName}>
-        <div>
-          name: <input value={newName} onChange={handleNameChange}/>
-        </div>
-        <div>
-          number: <input value={newNumber} onChange={handleNumberChange}/>
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <PersonForm newName={newName} newNumber={newNumber} handleAddName={handleAddName} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange}/>
 
       <h3>Filter</h3>
-      <div>
-        contains string: <input value={filterString} onChange={handleFilterChange}/>
-      </div>
+      <Filter filterString={filterString} handleFilterChange={handleFilterChange}/>
 
       <h2>Numbers</h2>
-      <Persons persons={personsToShow}/>
+      <Persons persons={personsToShow} handleDelete={handleDelete}/>
     </div>
   )
 }

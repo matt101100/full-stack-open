@@ -1,24 +1,60 @@
 {
-    "persons":[
-      { 
-        "name": "Arto Hellas", 
-        "number": "040-123456",
-        "id": "1"
-      },
-      { 
-        "name": "Ada Lovelace", 
-        "number": "39-44-5323523",
-        "id": "2"
-      },
-      { 
-        "name": "Dan Abramov", 
-        "number": "12-43-234345",
-        "id": "3"
-      },
-      { 
-        "name": "Mary Poppendieck", 
-        "number": "39-23-6423122",
-        "id": "4"
-      }
-    ]
-  }
+  "persons": [
+    {
+      "name": "Arto Hellas",
+      "number": "040-123456",
+      "id": "1"
+    },
+    {
+      "name": "Ada Lovelace",
+      "number": "39-44-5323523",
+      "id": "2"
+    },
+    {
+      "name": "Dan Abramov",
+      "number": "12-43-234345",
+      "id": "3"
+    },
+    {
+      "name": "Mary Poppendieck",
+      "number": "39-23-6423122",
+      "id": "4"
+    },
+    {
+      "name": "Greg Heffley",
+      "number": "02-44333333",
+      "important": true,
+      "id": "bd04"
+    },
+    {
+      "id": "a33b",
+      "name": "Susan Heffley",
+      "number": "02-432423",
+      "important": true
+    },
+    {
+      "id": "9ed0",
+      "name": "Frank Heffley",
+      "number": "02-23423423",
+      "important": false
+    },
+    {
+      "id": "2104",
+      "name": "Roderick Heffley",
+      "number": "04-234234",
+      "important": true
+    },
+    {
+      "id": "6d2c",
+      "name": "Manny Heffley",
+      "number": "034-4234234",
+      "important": false
+    },
+    {
+      "id": "2ca6",
+      "name": "Rowley Jefferson",
+      "number": "032-324234",
+      "important": false
+    }
+  ]
+}

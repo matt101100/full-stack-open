@@ -2,7 +2,8 @@
   "persons": [
     {
       "name": "Arto Hellas",
-      "number": "040-123456",
+      "number": "040-123457",
+      "important": false,
       "id": "1"
     },
     {
@@ -14,11 +15,6 @@
       "name": "Dan Abramov",
       "number": "12-43-234345",
       "id": "3"
-    },
-    {
-      "name": "Mary Poppendieck",
-      "number": "39-23-6423122",
-      "id": "4"
     },
     {
       "name": "Greg Heffley",
@@ -55,6 +51,12 @@
       "name": "Rowley Jefferson",
       "number": "032-324234",
       "important": false
+    },
+    {
+      "id": "6c65",
+      "name": "Holly Hills",
+      "number": "0423-23423423",
+      "important": true
     }
   ]
 }

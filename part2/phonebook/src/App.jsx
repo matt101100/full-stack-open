@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Persons from './components/Persons'
 import PersonForm from './components/PersonForm'
 import Filter from './components/Filter'
+import Notification from './components/Notification'
 import serverUtils from './services/serverUtils'
 
 const App = () => {
@@ -10,6 +11,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterString, setFilterString] = useState('')
+  const [errorMessage, setErrorMessage] = useState(null)
 
   // filter persons by user specified string
   const personsToShow = persons.filter(person => person.name.toLowerCase().includes(filterString.toLowerCase()))
@@ -20,7 +22,7 @@ const App = () => {
 
   // !! Event Handlers !!
 
-  const handleAddName = (event, id) => {
+  const handleAddName = (event) => {
       event.preventDefault() // prevents the page from reloading on button press
       if (doesPersonExist(newName, persons)) {
         // prevent duplicate names from being added to the phonebook
@@ -45,6 +47,20 @@ const App = () => {
                 )
               )
             })
+            .catch(error => {
+              setErrorMessage(
+                `${updatedPerson.name}'s contact info has recently been removed from server`
+              )
+              setTimeout(() => {
+                setErrorMessage(null)
+              }, 5000)
+            })
+          setErrorMessage(
+            `Successfully updated ${updatedPerson.name}'s contact details`
+          )
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 3000)
         }
         return
       }
@@ -63,6 +79,12 @@ const App = () => {
           setNewName('')
           setNewNumber('')
         })
+      setErrorMessage(
+        `Added ${personObject.name}`
+      )
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 3000)
   }
 
   const handleDelete = (event, id) => {
@@ -103,6 +125,7 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
+      <Notification message={errorMessage}/>
       <PersonForm newName={newName} newNumber={newNumber} handleAddName={handleAddName} handleNameChange={handleNameChange} handleNumberChange={handleNumberChange}/>
 
       <h3>Filter</h3>

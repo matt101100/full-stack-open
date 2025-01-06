@@ -3,3 +3,5 @@ How to set up a new Vite project:
     2. $ cd appname
     3. $ npm install
 Then use $ npm run dev to run the app
+
+App: https://fso-p3-root.fly.dev/

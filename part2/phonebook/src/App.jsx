@@ -24,6 +24,7 @@ const App = () => {
 
   const handleAddName = (event) => {
       event.preventDefault() // prevents the page from reloading on button press
+
       if (doesPersonExist(newName, persons)) {
         // prevent duplicate names from being added to the phonebook
         const confirmed = window.confirm(
@@ -71,6 +72,7 @@ const App = () => {
         number: newNumber,
         important: Math.random() < 0.5,
       }
+
       // POST the new person to the server and update persons array
       serverUtils
         .create(personObject)
@@ -79,6 +81,13 @@ const App = () => {
           setNewName('')
           setNewNumber('')
         })
+        .catch(error => {
+          setErrorMessage(error.response.data.error)
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 3000)
+        })
+
       setErrorMessage(
         `Added ${personObject.name}`
       )
